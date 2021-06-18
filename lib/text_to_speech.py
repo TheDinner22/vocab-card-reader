@@ -6,6 +6,7 @@ import os, sys
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # adds project dir to places it looks for the modules
 sys.path.append(BASE_PATH)
 
+from playsound import playsound
 from gtts import gTTS
 
 class Reader():
@@ -45,8 +46,22 @@ class Reader():
             print(text)
 
     def play_text(self, text_to_play):
-        """play text that has already been converted into and mp3"""
-        pass
+        """play text that has already been converted into an mp3"""
+        if type(text_to_play) == str:
+            # sanity check text
+            if text_to_play.lower().strip() != "":
+                text_to_play = text_to_play.lower().strip()
+                # create the file path
+                file_path = self.base_dir + (text_to_play.replace(" ","_") + ".mp3")
+
+                # make sure the file exists
+                if os.path.exists(file_path):
+                    playsound(file_path)
+                else:
+                    print(file_path + " was not found and so, could not be played") 
+        else:
+            print("I only take strings I was given:\n\n")
+            print(text_to_play)  
 
     def parse_and_play(self,text):
         """convert text to speech and play it all in the same function"""
@@ -55,4 +70,5 @@ class Reader():
 #im here for testing
 if __name__ == "__main__":
     reader = Reader() #use_test_dir=True)
-    reader.text_to_speech("     skippity bop mm da da    \n\n")
+    reader.text_to_speech("     @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@   \n\n")
+    reader.play_text("\n\n        @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@     \n\n\n   ")
