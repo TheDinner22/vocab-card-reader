@@ -11,6 +11,7 @@ from gtts import gTTS
 
 class Reader():
     def __init__(self, use_test_dir=False):
+        self.use_test_dir = use_test_dir
         self.language = "en"
         self.base_dir = "data/text_from_speech/" if not use_test_dir else "data/test/"
     
@@ -41,7 +42,7 @@ class Reader():
                     os.remove(filename)
                 else:
                     print("could not find the .mp3 in lib so could not delete it")
-        else:
+        elif not self.use_test_dir:
             print("I only take strings I was given:\n\n")
             print(text)
 
@@ -59,7 +60,7 @@ class Reader():
                     playsound(file_path)
                 else:
                     print(file_path + " was not found and so, could not be played") 
-        else:
+        elif not self.use_test_dir:
             print("I only take strings I was given:\n\n")
             print(text_to_play)  
 
