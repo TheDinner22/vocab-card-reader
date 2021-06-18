@@ -13,8 +13,11 @@ https://dictionaryapi.dev/
 
 # Dependencies
 -PlaySound, used to play any .mp3 file
-use "pip install playsound" to install it
--Requests, used to send get requests to the API
-use "pip install requests" to install it
+use "pip install playsound" to install it  
+
+-Requests, used to send get requests to the API  
+
+use "pip install requests" to install it  
+
 -gTTS, used to convert text to speech
 use "pip install gTTS" to install it
