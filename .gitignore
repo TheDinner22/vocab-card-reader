@@ -2,3 +2,4 @@ help
 __pycache__
 del_me
 data/text_from_speech/*.mp3
+data/test/*.mp3
