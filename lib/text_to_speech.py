@@ -66,10 +66,21 @@ class Reader():
 
     def parse_and_play(self,text):
         """convert text to speech and play it all in the same function"""
-        pass
+        # NOTE: i did this the lazy way but it doesn't really matter
+        if type(text) == str:
+            if text.lower().strip() != "":
+                text = text.lower().strip()
+                self.text_to_speech(text)
+                self.play_text(text)
+        elif not self.use_test_dir:
+            print("I only take strings I was given:\n\n")
+            print(text)  
 
 #im here for testing
 if __name__ == "__main__":
     reader = Reader() #use_test_dir=True)
-    reader.text_to_speech("     @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@   \n\n")
-    reader.play_text("\n\n        @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@     \n\n\n   ")
+    
+    reader.parse_and_play("i am tired")
+
+    #reader.text_to_speech("     @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@   \n\n")
+    #reader.play_text("\n\n        @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@     \n\n\n   ")
