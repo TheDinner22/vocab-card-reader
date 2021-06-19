@@ -92,6 +92,11 @@ class Reader():
             print("I only take strings I was given:\n\n")
             print(text)
 
+    def purge_all_mp3s(self):
+        # TODO make a function that deletes all of the mp3's 
+        # in the self.base_dir
+        pass
+
 #im here for testing
 if __name__ == "__main__":
     reader = Reader() #use_test_dir=True)
