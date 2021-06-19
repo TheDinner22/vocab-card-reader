@@ -66,21 +66,37 @@ class Reader():
 
     def parse_and_play(self,text):
         """convert text to speech and play it all in the same function"""
-        # NOTE: i did this the lazy way but it doesn't really matter
         if type(text) == str:
             if text.lower().strip() != "":
                 text = text.lower().strip()
-                self.text_to_speech(text)
-                self.play_text(text)
+
+                # gt filename and file_path
+                filename = (text.replace(" ","_")) + ".mp3"
+                file_path = "lib/" + filename
+                
+                # convert to speech
+                speechObj = gTTS(text=text, lang=self.language, slow=False)
+
+                # save here
+                speechObj.save(file_path)
+
+                # play here
+                playsound(file_path)
+
+                # delete file here
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                else:
+                    print("file did not exist, and so could not be deleted -- parse and play")
         elif not self.use_test_dir:
             print("I only take strings I was given:\n\n")
-            print(text)  
+            print(text)
 
 #im here for testing
 if __name__ == "__main__":
     reader = Reader() #use_test_dir=True)
     
-    reader.parse_and_play("i am tired")
+    reader.parse_and_play("stringy boi")
 
     #reader.text_to_speech("     @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@   \n\n")
     #reader.play_text("\n\n        @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@     \n\n\n   ")
