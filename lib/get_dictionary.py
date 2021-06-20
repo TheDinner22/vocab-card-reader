@@ -109,15 +109,30 @@ class Librarian():
                 # add the meanings dict-list to data-list
                 my_word_dict["meanings"] = meanings if meanings != [] else False
 
-                # add the my_word_dict to data_list
-                self.data_list.append(my_word_dict) 
+                # make sure the api supplied us with the following:
+
+                word_is_ok = True
+
+                # a word
+                
+                # a definition
+
+                # at least one part of speech
+
+                # synonyms or antonyms or an example of the word being used
+
+                if word_is_ok:
+                    # add the my_word_dict to data_list
+                    self.data_list.append(my_word_dict)
+                else:
+                    self.hard_coded_definitions()
         else:
             print(f'word: {self.word} was not found')
-            # TODO just default to a "word not found" thing 
-            # or default to a less specific/preset definition 
-            # that I hard code
-            pass
+            self.hard_coded_definitions()
     
+    def hard_coded_definitions(self):
+        pass
+
     def purge_all_mp3_files(self):
         """remove all files from self.base_dir"""
         all_files = os.listdir(self.base_dir)
