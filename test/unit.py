@@ -105,6 +105,21 @@ def test4(done):
     done("Reader.parse_and_play() should not throw when passed any data-type")
 unit_tests["Reader.parse_and_play() should not throw when passed any data-type"] = test4
 
+# parse and play should work even when called several times a second
+def test5(done):
+    reader = Reader(use_test_dir=True)
+    words_list = ["hi","hi","hellow","i","am","testing","here"]
+    for word in words_list:
+        try:
+            reader.parse_and_play(word)
+        except Exception as e:
+            e = str(e)
+            msg = f"parse and play threw when passed: {word} and gave error msg:\n\n{e}"
+            raise AssertionError(msg)
+
+    # if the for loop completes with no errors the test is a pass
+    done("parse and play should work even when called several times a second")
+unit_tests["parse and play should work even when called several times a second"] = test5
 """
 # example tests
 def one_plus_one_is_two(done):
