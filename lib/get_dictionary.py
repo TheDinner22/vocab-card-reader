@@ -10,23 +10,23 @@ sys.path.append(BASE_PATH)
 from lib.config import staging
 
 class Librarian():
-    def __init__(self, word, ENV):
+    def __init__(self, word, ENV, use_test_dir=False):
         self.word = word
+        self.use_test_dir = use_test_dir
         self.data_list = []
+        self.base_dir = "data/sounds/" if not self.use_test_dir else "data/test/" 
 
         # URI for word look up
         self.word_URI = ENV["API_URI"].replace("<word>",self.word)
 
-        # get res object
+        # get res object/look up the word
         self.res = requests.get(self.word_URI)
 
-        # look up a word
+        # get the json from the response
         self.full_json_list = self.res.json()
 
         # did the api find the word?
-        # TODO del me self.word_found = True if type(self.full_json_list) == list else False
         self.word_found = True if self.res.status_code == 200 else False 
-
 
         if self.word_found:
             # get all of the things i need from the 
@@ -35,27 +35,94 @@ class Librarian():
                 my_word_dict = {}
 
                 # things i want from each dict:
+
                 
                 # the word
+                my_word_dict["word"] = api_word_dict['word']
 
                 # mp3 of word being pronounced
+                try:
+                    link_for_mp3 = api_word_dict["phonetics"][0]["audio"]
+                except Exception as _e:
+                    link_for_mp3 = ""
+                if link_for_mp3 != "":
+                    res = requests.get(link_for_mp3)
+                    if res.status_code == 200:
+                        # NOTE  
+                        # write binary to a file in data/sounds
+                        filename = my_word_dict["word"] + '.mp3'
+                        file_path = self.base_dir + filename
+                        with open(file_path, "wb+") as file_object:
+                            file_object.write(res.content)
+                            my_word_dict["mp3_path"] = file_path
+                    else:
+                        my_word_dict["mp3_path"] = False    
+                else:
+                    my_word_dict["mp3_path"] = False
 
-                # part of speech # key in dict in meanings list
+                # NOTE the rest of these are in the meanings key, 
+                # this means that there can be several of these in one api_word_dict 
+                # which keep in mind we are looping through several of
+                
+                meanings = []
 
-                # definition
+                for their_obj in api_word_dict["meanings"]:
+                    my_dict = {}
 
-                # first 4 synonyms of the word
+                    # part of speech # key in dict in meanings list
+                    try:
+                        my_dict["part_of_speech"] = their_obj["partOfSpeech"]
+                    except Exception as _e:
+                        my_dict["part_of_speech"] = False
 
-                # word used in sentance (example param)
+                    # definition
+                    try:
+                        my_dict["definition"] = their_obj["definitions"][0]["definition"]
+                    except Exception as _e:
+                        my_dict["definition"] = False
+
+                    # first 4 synonyms of the word (if they exist)
+                    try:
+                        synonyms_list = their_obj["definitions"][0]["synonyms"]
+                        final_index = 4 if len(synonyms_list) >= 4 else len(synonyms_list)
+                        my_dict["synonyms"] = synonyms_list[0:final_index]
+                    except Exception as _e:
+                        my_dict["synonyms"] = False
+
+
+                    # first 4 antonyms of the word (if they exist)
+                    try:
+                        antonyms_list = their_obj["definitions"][0]["antonyms"]
+                        final_index = 4 if len(antonyms_list) >= 4 else len(antonyms_list)
+                        my_dict["antonyms"] = antonyms_list[0:final_index]
+                    except Exception as _e:
+                        my_dict["antonyms"] = False
+
+                    # word used in sentance (example param)
+                    try:
+                        my_dict["example"] = their_obj["definitions"][0]["example"] if type(their_obj["definitions"][0]["example"]) == str and their_obj["definitions"][0]["example"] != "" else False
+                    except Exception as _e:
+                        my_dict["example"] = False
+
+                    meanings.append(my_dict)
+
+                # add the meanings dict-list to data-list
+                my_word_dict["meanings"] = meanings if meanings != [] else False
 
                 # add the my_word_dict to data_list
                 self.data_list.append(my_word_dict) 
         else:
+            print(f'word: {self.word} was not found')
             # just default to a "word not found" thing 
             # or default to a less specific definition 
             # that I hard code
             pass
+    
+    def purge_all_files(self):
+        """remove all files from self.base_dir"""
+        pass
 
 if __name__ == "__main__":
-    librar_bad = Librarian("abed",staging)
-    librar_good = Librarian("hello",staging)
+    librar_bad = Librarian("abed",staging,use_test_dir=True)
+    librar_good = Librarian("wane",staging,use_test_dir=True)
+
