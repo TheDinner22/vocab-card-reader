@@ -8,6 +8,7 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # adds p
 sys.path.append(BASE_PATH)
 
 from lib.config import staging
+from lib.backup_dict import hard_code_dict
 
 class Librarian():
     def __init__(self, word, ENV, use_test_dir=False):
@@ -159,20 +160,12 @@ class Librarian():
     
     def hard_coded_definitions(self):
         """get the words definition from a txt file"""
+        print('i ran ++++++++++')
         # re-set self.data list
         self.data_list = []
-
-        # get the hard-coded dictionary as a list
-        dict_path = 'data/word_info/backup_dict.txt'
-        with open(dict_path, "r") as file_object:
-            dictionary_list = file_object.readlines()
-
         # loop through each word until we find our word
-        for definition in dictionary_list:
-            definition_list = json.loads( '"' + definition.strip() + '"')
-
+        for definition_list in hard_code_dict:
             for word_dict in definition_list:
-                #TODO del me word_dict = dict(word_dict)
                 if word_dict["word"] == self.word:
                     self.data_list = definition_list
                 if self.data_list != []:
@@ -193,10 +186,13 @@ class Librarian():
                 print(f"could not remove {full_file_path}")
 
 if __name__ == "__main__":
-    librar_bad = Librarian("abed",staging,use_test_dir=True)
+    #librar_bad = Librarian("abed",staging,use_test_dir=True)
+
+    #print(librar_bad.data_list)
+
     librar_good = Librarian("wane",staging,use_test_dir=True)
 
-    #print(librar_good.data_list[0])
-    #print('\n')
-    #print(librar_good.data_list[1])
+    print(librar_good.data_list[0])
+    print('\n')
+    print(librar_good.data_list[1])
 
