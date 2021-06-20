@@ -157,6 +157,9 @@ class Librarian():
         else:
             print(f'word: {self.word} was not found')
             self.hard_coded_definitions()
+
+        # if the mp3 was not created, make it now using text to speech
+        self.confirm_mp3_path()
     
     def hard_coded_definitions(self):
         """get the words definition from a txt file"""
@@ -173,7 +176,14 @@ class Librarian():
             if self.data_list != []:
                 break
                     
+    def confirm_mp3_path(self):
+        mp3_path = self.data_list[0]["mp3_path"]
 
+        if not os.path.exists(mp3_path):
+            pass
+            # here we are going to use tts to make the mp3 path exist 
+            # remember you still need to import the tts module you made
+            #TODO make unit tests for this file 
 
     def purge_all_mp3_files(self):
         """remove all files from self.base_dir"""
