@@ -2,7 +2,7 @@
 # processes json from the dictionary api
 
 # dependencies
-import os, sys, requests
+import os, sys, requests, json
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # adds project dir to places it looks for the modules
 sys.path.append(BASE_PATH)
@@ -114,11 +114,37 @@ class Librarian():
                 word_is_ok = True
 
                 # a word
+                if type(my_word_dict["word"]) != str or my_word_dict["word"] == '':
+                    word_is_ok = False
                 
                 # a definition
+                elif my_word_dict["meanings"] == False:
+                    word_is_ok = False
+
+                elif word_is_ok:
+                    for meaning_dict in my_word_dict["meanings"]:
+                        if "definition" in meaning_dict:
+                            if type(meaning_dict["definition"]) == str and meaning_dict["definition"] != "":
+                                word_is_ok = True
+                                break
+                            else:
+                                word_is_ok = False
+                        else:
+                            word_is_ok = False
 
                 # at least one part of speech
-
+                elif word_is_ok:
+                    for meaning_dict in my_word_dict["meanings"]:
+                        if "part_of_speech" in meaning_dict:
+                            if type(meaning_dict["part_of_speech"]) == str and meaning_dict["part_of_speech"] != "":
+                                word_is_ok = True
+                                break
+                            else:
+                                word_is_ok = False
+                        else:
+                            word_is_ok = False
+                    
+                # NOTE im not adding this but ill leave it here as an idea for the future
                 # synonyms or antonyms or an example of the word being used
 
                 if word_is_ok:
@@ -126,12 +152,35 @@ class Librarian():
                     self.data_list.append(my_word_dict)
                 else:
                     self.hard_coded_definitions()
+                    break
         else:
             print(f'word: {self.word} was not found')
             self.hard_coded_definitions()
     
     def hard_coded_definitions(self):
-        pass
+        """get the words definition from a txt file"""
+        # re-set self.data list
+        self.data_list = []
+
+        # get the hard-coded dictionary as a list
+        dict_path = 'data/word_info/backup_dict.txt'
+        with open(dict_path, "r") as file_object:
+            dictionary_list = file_object.readlines()
+
+        # loop through each word until we find our word
+        for definition in dictionary_list:
+            definition_list = json.loads( '"' + definition.strip() + '"')
+
+            for word_dict in definition_list:
+                #TODO del me word_dict = dict(word_dict)
+                if word_dict["word"] == self.word:
+                    self.data_list = definition_list
+                if self.data_list != []:
+                    break
+            if self.data_list != []:
+                break
+                    
+
 
     def purge_all_mp3_files(self):
         """remove all files from self.base_dir"""
@@ -146,4 +195,8 @@ class Librarian():
 if __name__ == "__main__":
     librar_bad = Librarian("abed",staging,use_test_dir=True)
     librar_good = Librarian("wane",staging,use_test_dir=True)
+
+    #print(librar_good.data_list[0])
+    #print('\n')
+    #print(librar_good.data_list[1])
 
