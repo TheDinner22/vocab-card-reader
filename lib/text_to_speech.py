@@ -92,16 +92,25 @@ class Reader():
             print("I only take strings I was given:\n\n")
             print(text)
 
-    def purge_all_mp3s(self):
-        # TODO make a function that deletes all of the mp3's 
-        # in the self.base_dir
-        pass
+    def purge_all_mp3_files(self):
+        """remove all files from self.base_dir"""
+        all_files = os.listdir(self.base_dir)
+        for file in all_files:
+            full_file_path = self.base_dir + file
+            if os.path.exists(full_file_path) and file.replace(".mp3","") != file:
+                os.remove(full_file_path)
+            elif not self.use_test_dir:
+                print(f"could not remove {full_file_path}")
 
 #im here for testing
 if __name__ == "__main__":
-    reader = Reader() #use_test_dir=True)
+    reader = Reader(use_test_dir=True)
     
-    reader.parse_and_play("stringy boi")
+    #reader.text_to_speech('del me')
+
+    # reader.purge_all_mp3_files()
+
+    # reader.parse_and_play("stringy boi")
 
     #reader.text_to_speech("     @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@   \n\n")
     #reader.play_text("\n\n        @@@@@@@@@@@@@@@@@@@@@@@@@@@rat@     \n\n\n   ")
