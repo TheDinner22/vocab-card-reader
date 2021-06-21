@@ -167,6 +167,48 @@ def test6(done):
     done("purge all mp3's should delete all mp3s in a dir and leave all other file types")
 unit_tests["purge all mp3's should delete all mp3s in a dir and leave all other file types"] = test6
 
+# no matter what happens prior to it (even file deletion), running the confirm_mp3_path function should mean mp3 paths are valid
+def test7(done):
+    word_list = ["abed","iridescent","hello","abed","labyrinth","indomitable"]
+    class_list = []
+
+    for word in word_list:
+        librar = Librarian(word, testing, use_test_dir=True)
+        class_list.append(librar)
+
+    for my_class in class_list:
+        # run confirm_mp3_path so that all of these classes should already have valid mp3_path's
+        my_class.confirm_mp3_path()
+
+        # check to make sure all mp3_path's are valid
+        for my_dict in my_class.data_list:
+            full_path = my_dict["mp3_path"]
+            if not os.path.exists(full_path):
+                # if the path does not exist confirm_mp3_path failed 
+                # and so does the test
+                msg = f"{full_path} did not exist for word: {my_dict['word']}\nwith dict:\n{str(my_dict)}"
+                raise AssertionError(msg)
+        
+        # i will delete all mp3 files and then run the confirm_mp3_path 
+        # the files should be recreated
+        my_class.purge_all_mp3_files()
+        my_class.confirm_mp3_path()
+
+        # check again to make sure all mp3_path's are valid
+        for my_dict in my_class.data_list:
+            full_path = my_dict["mp3_path"]
+            if not os.path.exists(full_path):
+                # if the path does not exist confirm_mp3_path failed 
+                # and so does the test
+                msg = f"!!!Please note that this error message is after the deletion!!!\n{full_path} did not exist for word: {my_dict['word']}\nwith dict:\n{str(my_dict)}"
+                raise AssertionError(msg)
+    
+    # get rid of any remaining mp3's
+    class_list[0].purge_all_mp3_files()
+
+    # if all of the for loop exited with no errors raised, the test is a pass
+    done("no matter what happens prior to it (even file deletion), running the confirm_mp3_path function should mean mp3 paths are valid")
+unit_tests["no matter what happens prior to it (even file deletion), running the confirm_mp3_path function should mean mp3 paths are valid"] = test7
 
 
 

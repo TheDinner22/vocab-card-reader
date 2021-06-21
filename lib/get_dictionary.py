@@ -155,7 +155,8 @@ class Librarian():
                     self.hard_coded_definitions()
                     break
         else:
-            print(f'word: {self.word} was not found')
+            if not self.use_test_dir:
+                print(f'word: {self.word} was not found')
             self.hard_coded_definitions()
 
         # if the mp3 was not created, make it now using text to speech
