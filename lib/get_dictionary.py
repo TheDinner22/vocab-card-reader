@@ -216,7 +216,7 @@ class Librarian():
             full_file_path = self.base_dir + file
             if os.path.exists(full_file_path) and file.replace(".mp3","") != file:
                 os.remove(full_file_path)
-            elif not self.use_test_dir:
+            elif not self.use_test_dir and __name__ == "__main__":
                 print(f"could not remove {full_file_path}")
 
 if __name__ == "__main__":
