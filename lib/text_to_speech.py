@@ -71,7 +71,7 @@ class Reader():
                 text = text.lower().strip()
 
                 # gt filename and file_path
-                filename = (text.replace(" ","_")) + ".mp3"
+                filename = "tmp_file.mp3"# TODO DEL ME (text.replace(" ","_")) + ".mp3"
                 file_path = "lib/" + filename
                 
                 # convert to speech
